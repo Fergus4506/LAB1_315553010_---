@@ -1,212 +1,245 @@
-# Lab 1：胸部 X 光肺炎分類
+# Lab 1 胸部 X 光肺炎分類
 
-學號：315553010　姓名：楊敦傑
+**學號：315553010　姓名：楊敦傑**
 
-本專案以自訂 PyTorch Dataset／DataLoader，使用 ImageNet 預訓練 ResNet18、ResNet50、ResNet101，分類 NORMAL（0）與 PNEUMONIA（1）。三模型各完成 12 輪 GPU 訓練；交付權重已重新載入，重現驗證與測試指標。
+使用自訂 PyTorch Dataset／DataLoader，比較 ImageNet 預訓練 ResNet18、ResNet50 與 ResNet101，將胸部 X 光影像分類為 NORMAL（0）或 PNEUMONIA（1）。三個模型均以 Python 內建 `venv` 環境完成 12 輪 CUDA GPU 訓練。
 
-**正式實驗唯一位置：`results/corrected_group_split_20261002/`。** Word、README 與圖表均引用這次修正切分後的結果。專案根目錄為 `D:\人工智慧醫學影像應用\lab1\LAB1_315553010_楊敦傑`。
+**本次正式實驗結果位於 [`result/`](result/)。** 各模型依最高驗證集肺炎 F1 保存權重；按相同準則跨模型選出的 ResNet101，測試 accuracy 為 **89.26%**、F1 為 **0.9207**。逐輪觀察到的最高測試 accuracy 則為 ResNet50 的 **93.27%**，兩者代表不同的評估方式。
 
-## 1. 專案結構
+## 專案結構
 
 ```text
-LAB1_315553010_楊敦傑/
-├─ README.md                           專案說明與重現步驟
-├─ requirements.txt                    非 PyTorch 相依套件
-├─ .gitignore                          排除環境、資料、快取與大型權重
-├─ LAB1_315553010_楊敦傑.docx             可編輯報告
-├─ DATASET_SPLIT_REVIEW_20261002.md      資料來源與切分診斷
-├─ REPORT_SPEC_CHECKLIST.md             PDF 報告規格對照
-├─ download_data.py                     固定官方第 2 版、擷取唯一影像
-├─ verify_dataset_source.py             與官方 ZIP 逐檔核對
-├─ split_dataset.py                     建立與驗證分組切分清單
-├─ train.py                            GPU 訓練與逐輪紀錄
-├─ run_corrected_experiments.py         三模型訓練、圖表及權重稽核入口
-├─ compare_models.py                   整合結果與繪圖
-├─ verify_pretrained.py                 核對官方預訓練特徵與二類輸出
-├─ audit_corrected_experiment.py        核對 CSV、選模與 GPU 權重重評估
-├─ inference.py                        單張影像推論
-├─ build_docx_report.py                 由正式結果重建完整 Word
-├─ update_corrected_report.py           更新既有 Word 的實驗段落並備份
-├─ corrected_report_content.py          結果導向的討論內容
-├─ build_result_page.py                 建立結果展示 HTML
-├─ check_corrected_report.py            Word 表格、圖片與數值核對
-├─ tools/cleanup_project.ps1            舊檔清理：預覽後可明確執行
-├─ .venv/                              Python 內建 venv（不納入 Git）
-├─ data/                               原始影像、核對清單、官方權重快取
-│  ├─ chest_xray/{train,val,test}/      原始 5856 張影像，保持不變
-│  ├─ source_verification/              來源驗證及 corrected_split_manifest.json
-│  └─ torch_cache/                     官方 ImageNet 權重
-└─ results/corrected_group_split_20261002/
-   ├─ summary.json、run_metadata.json   成績與環境設定
-   ├─ combined_epoch_metrics.csv        三模型共 36 筆逐輪指標
-   ├─ training.log                     完整訓練日誌
-   ├─ split_manifest.json              本次實驗切分清單副本
-   ├─ source_verification_summary.json、split_diagnosis.json
-   ├─ audit_corrected.json、pretrained_verification.json
-   ├─ report_verification.json          Word 內容核對與檔案雜湊
-   ├─ comparison_*.png、comparison_results_screenshot.jpg
-   └─ *_best_validation.pt             三份交付權重（不納入 Git）
+.
+├── README.md                       建置、重現步驟與結果解讀
+├── requirements.txt                實驗使用的非 PyTorch 套件版本
+├── download_data.py                下載固定版本並擷取唯一影像
+├── verify_dataset_source.py        核對官方 ZIP 與本機影像
+├── split_dataset.py                建立分組切分並檢查跨區重疊
+├── train.py                        自訂資料載入、GPU 訓練及逐輪紀錄
+├── run_corrected_experiments.py     三模型訓練與結果稽核入口
+├── compare_models.py               比較圖與成績彙整
+├── verify_pretrained.py            核對預訓練權重來源及二類輸出
+├── audit_corrected_experiment.py    核對指標、選模及重新評估權重
+├── inference.py                    單張影像推論
+├── LAB1_315553010_楊敦傑.docx         實驗報告
+└── result/                         本次正式實驗紀錄
+    ├── summary.json                驗證選模成績與最高觀察測試值
+    ├── run_metadata.json           原實驗環境與訓練設定
+    ├── epoch_metrics.csv           三模型共 36 筆逐輪指標
+    ├── combined_epoch_metrics.csv  繪圖使用的彙整指標
+    ├── split_manifest.json         5856 張影像的分組與雜湊
+    ├── source_verification_summary.json
+    ├── split_diagnosis.json
+    ├── audit_corrected.json        保存權重的 GPU 重評估紀錄
+    ├── pretrained_verification.json
+    ├── experiment_completed.json  訓練與稽核完成狀態
+    ├── training.log               三模型完整訓練日誌
+    └── comparison_*.png            曲線與混淆矩陣
 ```
 
-快取、報告更新備份及 QA 目錄會由相關程式按需建立。若尚有 `archive_from_c/`、舊的 `results/` 根目錄檔案或 `results/resnet101/`，它們是待清理的舊產物，不能當作正式結果；清理方式見第 7 節。
+下載資料會建立 `data/`。原始影像、虛擬環境及 `.pt` 權重不納入 Git，取得專案後請依下列步驟重新產生。`result/` 的圖表、CSV、JSON 與日誌可直接閱讀。
 
-## 2. 資料來源與切分
+## 資料來源與切分
 
-來源：[Kaggle Chest X Ray Images Pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)，固定第 2 版。本機 **5856 張**影像的相對路徑、大小及 CRC32 全部符合官方 ZIP，沒有缺少或額外影像。資料卡文字的 5863 張與官方實際影像數不同；ZIP 的重複巢狀副本只擷取一次，`__MACOSX`／`._` 是資源資訊，不當作 X 光影像。
+資料來源：[Kaggle Chest X Ray Images Pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)，下載工具固定使用**第 2 版**。
 
-原始資料有 30 組完全相同的檔案／像素影像，均未跨官方分區。舊程式按單張影像抽驗證集，造成 9 組相同影像及 270 組完整檔名組跨訓練與驗證。此次修正屬於專案切分錯誤，並已重新訓練全部三模型。
+官方 ZIP 中有重複的巢狀目錄及 macOS 資源檔。程式只擷取唯一的 `train|val|test / NORMAL|PNEUMONIA / image` 影像，共 **5856 張**；本次逐檔核對相對路徑、大小與 CRC32 均相符。資料卡文字的 5863 張與可下載的唯一影像數不同。
 
-修正程式以檔名組、原檔 SHA256、解碼 RGB 尺寸與像素 SHA256 建立連通分組，整組放同一區。肺炎檔名組包含 `person編號_bacteria`／`person編號_virus`，正常影像使用 `IM-序號`／`NORMAL2-IM-序號`。官方 val 保留於驗證集，從官方 train 按類別選約 15% 作驗證，官方 test 完全保持原樣。原始重複影像也全部保留於同區。
+### 分組方式
 
-| 分區 | NORMAL | PNEUMONIA | 總數 |
+原始資料有 30 組檔案完全相同的影像，均位於同一官方分區；解碼像素檢查同樣得到 30 組，兩個數量不可相加。先前以單張影像切出驗證集，使 9 組相同影像跨訓練與驗證。正式結果已改用分組切分並重訓全部模型：
+
+- 以檔名組、檔案 SHA256、解碼 RGB 尺寸與像素 SHA256 建立連通分組，整組分配。
+- 肺炎檔名組包含 `person編號_bacteria` 或 `person編號_virus`；正常影像依 `IM-序號` 或 `NORMAL2-IM-序號` 分組。
+- 固定種子 `315553010`，從官方 train 依類別選約 15% 作驗證，官方 val 全部加入驗證；官方 test 保持原樣。
+- 原始重複影像保留在同一分區，不刪除影像。
+
+| 分區 | NORMAL | PNEUMONIA | 合計 |
 | --- | ---: | ---: | ---: |
 | 訓練 | 1140 | 3294 | 4434 |
 | 驗證 | 209 | 589 | 798 |
 | 測試 | 234 | 390 | 624 |
 
-修正後檔名組、原始檔雜湊、像素雜湊與連通分組的跨區重疊均為 **0**。每次訓練重新核對影像 SHA256、清單及官方 test 成員，資料不符就停止。未取得可信臨床病患識別碼，因此不能宣稱已證明病患獨立，也未排除所有近似影像。詳見資料診斷文件。
+正式切分的檔名組、檔案雜湊、像素雜湊及連通分組跨區重疊皆為 **0**。訓練前會再次核對影像雜湊、影像清單及官方測試成員。這不等於已證明病患完全獨立：資料缺乏可核實的臨床病患識別碼，也尚未排除所有近似影像。
 
-## 3. 模型選擇與訓練方法
+## 模型與共同設定
 
-### 為何選 ResNet18、50、101
+### 為何選擇這三種 ResNet
 
-殘差捷徑有助於深層網路最佳化。ResNet18 的 basic block 與較少參數提供小模型基準；ResNet50 使用 bottleneck，提供容量與成本的比較點；ResNet101 明顯增加深度，檢查更大容量是否有實際收益。更深網路也可能增加過度擬合與運算成本，不能保證更準確。
+ResNet 的殘差捷徑讓特徵可經捷徑傳遞，便於比較不同深度的網路。ResNet18 提供參數較少的基準；ResNet50 以 bottleneck 區塊提供中間容量；ResNet101 大幅增加深度，用來檢查更大容量是否帶來可觀察收益。較大模型也增加參數儲存與運算需求，因此需要同時比較成績及成本。
 
-| 模型 | 二類總參數 | 預訓練權重 |
-| --- | ---: | --- |
-| ResNet18 | 11,177,538 | ResNet18_Weights.IMAGENET1K_V1 |
-| ResNet50 | 23,512,130 | ResNet50_Weights.IMAGENET1K_V2 |
-| ResNet101 | 42,504,258 | ResNet101_Weights.IMAGENET1K_V2 |
+| 模型 | 區塊 | 四個 stage 的區塊數 | 二類總參數 | 可訓練參數 | 預訓練權重 |
+| --- | --- | --- | ---: | ---: | --- |
+| ResNet18 | BasicBlock | 2／2／2／2 | 11,177,538 | 10,494,466 | IMAGENET1K_V1 |
+| ResNet50 | Bottleneck | 3／4／6／3 | 23,512,130 | 22,067,202 | IMAGENET1K_V2 |
+| ResNet101 | Bottleneck | 3／4／23／3 | 42,504,258 | 41,059,330 | IMAGENET1K_V2 |
 
-三者均**使用 pretrained model**；最後 `fc` 重新初始化為二類輸出，符合 PDF 限制。凍結 conv1、bn1、layer1、layer2，並固定其中 BatchNorm 為 eval；微調 layer3、layer4、fc。交付權重 conv1 與對應官方權重逐元素相同，預訓練核對通過。預訓練可利用既有影像特徵降低從零訓練成本，本次沒有從零訓練對照，未量化改善幅度。V1／V2 權重不同，也使三者的差異無法完全歸因於深度。
+三者均**使用 pretrained model**，最後 `fc` 重新初始化為二類輸出。凍結 `conv1`、`bn1`、`layer1`、`layer2`，維持凍結區段 BatchNorm 為 eval；只微調 `layer3`、`layer4`、`fc`。預訓練提供已有的影像特徵，凍結前段則限制更新範圍。本次沒有從零訓練對照，不能量化預訓練帶來多少改善；V1 與 V2 的差別也使模型間差異無法完全歸因於深度。
 
-### 共同設定與選模規則
+### 資料載入與訓練
 
-- Python 3.12.14 內建 venv；PyTorch 2.11.0+cu128、torchvision 0.26.0+cu128、CUDA 12.8；GPU 為 RTX 4070。
-- 每模型 12 輪，batch size 32、DataLoader workers 2；224 × 224 RGB、ImageNet 正規化。
-- 訓練增強：±7° 旋轉、最多 3% 平移、0.95–1.05 倍縮放、10% 亮度／對比變動；驗證／測試僅縮放及正規化。
-- 加權交叉熵：`N / (2 × 該類別訓練張數)`；AdamW lr 1e-4、weight decay 1e-4、cosine 衰減、CUDA AMP。
-- 每模型重設種子 315553010；停用 cuDNN benchmark、啟用 deterministic。不同硬體／版本仍可能有數值差異。
-- 各模型按**最高驗證集肺炎 F1**保存權重，精確平手取較早輪次；跨模型推薦也只看驗證 F1。
-- 按 PDF 要求每輪記錄測試 accuracy／F1。最高觀察測試值只用於展示，沒有用於選權重或此次調參。F1 是肺炎正類二元 F1，並非 macro F1。
+- 輸入：224 × 224 RGB，ToTensor 後使用 ImageNet mean `[0.485, 0.456, 0.406]`、std `[0.229, 0.224, 0.225]`。
+- 訓練增強：RandomAffine 旋轉 ±7°、平移最多 3%、縮放 0.95–1.05；ColorJitter 亮度及對比各 0.9–1.1 倍。驗證／測試僅縮放、轉換及正規化。
+- DataLoader：batch size 32、workers 2、pin memory；僅訓練 shuffle，不丟棄最後不足一個 batch 的資料。
+- 每模型 12 輪；加權交叉熵的類別權重為 `N / (2 × N_c)`。
+- AdamW：learning rate `1e-4`、weight decay `1e-4`；CosineAnnealingLR `T_max=12`，CUDA float16 AMP 與 GradScaler。
+- 每模型重設種子 `315553010`，停用 cuDNN benchmark、啟用 deterministic。
+- 權重依**最高驗證集肺炎 F1**保存，完全同分時保留較早輪次。預測類別取 logits 的 argmax。
+- F1 為 PNEUMONIA 正類的二元 F1，不是 macro F1。測試集每輪評估是作業要求，未用於本次選權重或調整超參數。
 
-## 4. 建置與重現（Windows PowerShell）
+## 建置環境
 
-### 建立 venv 與確認 GPU
+需要 Python 3.12、NVIDIA GPU，以及能支援 CUDA 12.8 PyTorch wheel 的 NVIDIA 驅動。正式實驗使用 RTX 4070、Python 3.12.14、PyTorch 2.11.0+cu128、torchvision 0.26.0+cu128；其餘版本固定於 `requirements.txt`。不同硬體、驅動或套件版本可能產生數值差異。
 
-請先在專案根目錄開啟 PowerShell。以下安裝需 NVIDIA 驅動支援所用 CUDA wheel；現有專案已具備可用環境，不需重建它。
+取得本專案後，**在儲存庫根目錄開啟終端機**。以下命令均使用相對路徑，不需要特定磁碟或使用者目錄。
+
+### Windows PowerShell
 
 ```powershell
-Set-Location -LiteralPath 'D:\人工智慧醫學影像應用\lab1\LAB1_315553010_楊敦傑'
-New-Item -ItemType Directory -Force data\temp, data\pip_cache | Out-Null
-$env:TEMP = (Join-Path (Get-Location) 'data\temp')
+py -3.12 -m venv .venv
+$python = Join-Path (Get-Location) '.venv/Scripts/python.exe'
+New-Item -ItemType Directory -Force data/temp, data/pip_cache | Out-Null
+$env:TEMP = Join-Path (Get-Location) 'data/temp'
 $env:TMP = $env:TEMP
-$env:PIP_CACHE_DIR = (Join-Path (Get-Location) 'data\pip_cache')
-$env:TORCH_HOME = (Join-Path (Get-Location) 'data\torch_cache')
-$env:MPLCONFIGDIR = (Join-Path (Get-Location) 'data\mplcache')
-$env:CUDA_CACHE_PATH = (Join-Path (Get-Location) 'data\cuda_cache')
+$env:PIP_CACHE_DIR = Join-Path (Get-Location) 'data/pip_cache'
+$env:TORCH_HOME = Join-Path (Get-Location) 'data/torch_cache'
+$env:MPLCONFIGDIR = Join-Path (Get-Location) 'data/mplcache'
+$env:CUDA_CACHE_PATH = Join-Path (Get-Location) 'data/cuda_cache'
 $env:PYTHONIOENCODING = 'utf-8'
 
-# 只在尚未建立 .venv 的新環境執行
-py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install torch==2.11.0+cu128 torchvision==0.26.0+cu128 --index-url https://download.pytorch.org/whl/cu128
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -c "import torch; assert torch.cuda.is_available(), 'CUDA unavailable'; print(torch.__version__, torch.cuda.get_device_name(0))"
+& $python -m pip install torch==2.11.0+cu128 torchvision==0.26.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+& $python -m pip install -r requirements.txt
+& $python -c "import sys, torch; assert sys.prefix != sys.base_prefix; assert torch.cuda.is_available(), 'CUDA unavailable'; print(sys.executable); print(torch.__version__, torch.cuda.get_device_name(0))"
 ```
 
-訓練必須使用 CUDA，沒有 GPU 就停止。直接呼叫 venv 的 python，不需啟動 activate，也不會使用全域 Python 套件。
+### Linux Bash
 
-### 下載、核對、建立切分
+```bash
+python3.12 -m venv .venv
+python="$PWD/.venv/bin/python"
+mkdir -p data/temp data/pip_cache
+export TMPDIR="$PWD/data/temp"
+export PIP_CACHE_DIR="$PWD/data/pip_cache"
+export TORCH_HOME="$PWD/data/torch_cache"
+export MPLCONFIGDIR="$PWD/data/mplcache"
+export CUDA_CACHE_PATH="$PWD/data/cuda_cache"
+export PYTHONIOENCODING=utf-8
+
+"$python" -m pip install torch==2.11.0+cu128 torchvision==0.26.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+"$python" -m pip install -r requirements.txt
+"$python" -c "import sys, torch; assert sys.prefix != sys.base_prefix; assert torch.cuda.is_available(), 'CUDA unavailable'; print(sys.executable); print(torch.__version__, torch.cuda.get_device_name(0))"
+```
+
+以上直接呼叫 venv 的 Python，不必執行 activate。訓練與權重稽核需要 CUDA；若 GPU 檢查失敗，先處理驅動或 PyTorch 安裝。下列 PowerShell 步驟在 Bash 中可將 `& $python` 改為 `"$python"`；換新終端機時，請重新設定上述 Python 變數與環境變數。
+
+## 重現完整實驗
+
+### 1 下載並核對資料
 
 ```powershell
-.\.venv\Scripts\python.exe download_data.py --output-dir data
-.\.venv\Scripts\python.exe verify_dataset_source.py
-.\.venv\Scripts\python.exe split_dataset.py
+& $python download_data.py --output-dir data
+& $python verify_dataset_source.py
+& $python split_dataset.py
 ```
 
-使用固定官方版本下載，不需 Kaggle 帳戶。ZIP 保存在 `data/source_verification/`；兩個來源工具均會重用已存在的 ZIP。清理 ZIP 後再次來源核對會重新下載約 2.46 GB。已有影像經驗證相符時不會重複擷取。
+第一次下載約 2.46 GB，需網路連線。程式使用固定版本的公開下載端點，重用已存在的 ZIP；影像放在 `data/chest_xray/`，核對紀錄與切分清單放在 `data/source_verification/`。若下載端點回傳權限、驗證頁或限流錯誤，應先處理下載問題，不要跳過來源核對。
 
-`split_dataset.py` 使用固定預設比例 0.15 和種子 315553010；若改動它們，必須重新產生清單，並讓訓練設定一致。正式實驗的切分副本已保存在結果資料夾。
-
-### 完整重跑三種模型
+預設切分種子與比例對應本次正式實驗。可核對新產生清單與正式清單的 SHA256：
 
 ```powershell
-.\.venv\Scripts\python.exe run_corrected_experiments.py --output-dir results\reproduction_run
+& $python -c "from pathlib import Path; import hashlib; a=hashlib.sha256(Path('data/source_verification/corrected_split_manifest.json').read_bytes()).hexdigest(); b=hashlib.sha256(Path('result/split_manifest.json').read_bytes()).hexdigest(); print('generated:', a); print('reference:', b); assert a == b, 'Split manifests differ'"
 ```
 
-此入口依序訓練三模型、產生比較圖、核對 pretrained、以 GPU 重新評估三份交付權重。完成後寫入 `experiment_completed.json`。結果目錄必須位於專案內；已有完成成績的目錄會拒絕覆蓋，第二次重跑請改用新的目錄名稱。
+正式清單 SHA256：`d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3`。
 
-如只需檢查現有正式結果：
+### 2 訓練三個模型並核對權重
 
 ```powershell
-.\.venv\Scripts\python.exe verify_pretrained.py --results-dir results\corrected_group_split_20261002
-.\.venv\Scripts\python.exe audit_corrected_experiment.py --results-dir results\corrected_group_split_20261002
+& $python run_corrected_experiments.py --output-dir runs/reproduction_run
 ```
 
-重新 GPU 稽核需要 `data/chest_xray/`、切分清單及三份 `.pt`。這些大型檔案不納入 Git，其他人取得原始碼後需依上述步驟下載並訓練。正式圖表、CSV 和 JSON 可直接閱讀。
+程式依序完成三模型訓練、比較圖、預訓練來源檢查，以及保存權重的 GPU 重評估；全部通過後寫入 `experiment_completed.json`。`runs/reproduction_run/` 是此次重跑的輸出，`result/` 保留正式參考結果。已有完成成績的輸出目錄會拒絕覆蓋；再次重跑請換成新的目錄名稱。
 
-## 5. 實驗結果與討論
+主要產物包括：
 
-### 由驗證 F1 選定權重的正式測試成績
+- `summary.json`、`epoch_metrics.csv`、`training.log`：分數、每輪紀錄與日誌。
+- `*_best_validation.pt`：各模型依驗證 F1 保存的權重。
+- `comparison_accuracy.png`、`comparison_f1.png`：訓練／測試比較曲線。
+- `comparison_highest_test_confusion.png`、`comparison_final_test_confusion.png`：最高測試 accuracy 與驗證選模兩種混淆矩陣。
+- `pretrained_verification.json`、`audit_corrected.json`：預訓練核對與權重重評估結果。
 
-| 模型 | 選定輪次 | 驗證 F1 | 測試 accuracy | 測試 precision | 測試 recall | 測試 F1 |
+如需單獨重新核對這次產生的權重：
+
+```powershell
+& $python verify_pretrained.py --results-dir runs/reproduction_run
+& $python audit_corrected_experiment.py --results-dir runs/reproduction_run
+```
+
+若本機已另備 `result/` 對應的三份 `.pt`，可把上述目錄改為 `result`。Git 不包含權重，僅下載儲存庫後不能直接執行正式權重重評估。
+
+### 3 單張影像推論
+
+```powershell
+& $python inference.py --checkpoint runs/reproduction_run/resnet101_best_validation.pt --image data/chest_xray/test/NORMAL/IM-0001-0001.jpeg
+```
+
+推論優先使用 CUDA，無 CUDA 時可用 CPU，輸出預測類別及兩類 softmax 機率。請換成自己要評估的影像路徑；這些輸出是模型分類分數，未進行機率校正。
+
+## 正式實驗結果
+
+### 驗證 F1 選定權重後的測試表現
+
+| 模型 | 保存輪次 | 驗證 F1 | 測試 accuracy | Precision | Recall | 測試 F1 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | ResNet18 | 9 | 0.9889 | 85.58% | 0.8138 | 0.9974 | 0.8963 |
 | ResNet50 | 10 | 0.9880 | 87.66% | 0.8380 | 0.9949 | 0.9097 |
 | ResNet101 | 7 | 0.9897 | 89.26% | 0.8549 | 0.9974 | 0.9207 |
 
-依驗證 F1 推薦 ResNet101；其測試正確 557／624 張。相較 ResNet50，總錯誤從 77 降為 67，假陽性從 75 降為 66、假陰性從 2 降為 1，accuracy 增加 1.60 個百分點。三模型均以較高肺炎 recall 換來較多正常影像誤判為肺炎。這是單次切分與種子的觀察，不能推論更深模型普遍較好。
+來源：[`result/summary.json`](result/summary.json)。[`result/audit_corrected.json`](result/audit_corrected.json) 記錄全部 36 筆逐輪指標、選模規則與 GPU 重新評估；三份保存權重均重現對應輪次的驗證及測試指標。
 
-### PDF 要求的逐輪最高觀察值
+### 逐輪最高觀察測試成績
 
-| 模型 | 最高測試 accuracy | 最高測試 F1 | 各模型整段耗時 |
+| 模型 | 最高測試 accuracy | 最高測試 F1 | 12 輪整段耗時 |
 | --- | ---: | ---: | ---: |
-| ResNet18 | 92.79%（第 2 輪） | 0.9441（第 2 輪） | 522.8 秒 |
-| ResNet50 | 93.27%（第 2 輪） | 0.9475（第 2 輪） | 522.6 秒 |
-| ResNet101 | 91.35%（第 3 輪） | 0.9349（第 9 輪） | 524.1 秒 |
+| ResNet18 | 92.79%　第 2 輪 | 0.9441　第 2 輪 | 522.8 秒 |
+| ResNet50 | 93.27%　第 2 輪 | 0.9475　第 2 輪 | 522.6 秒 |
+| ResNet101 | 91.35%　第 3、9 輪 | 0.9349　第 9 輪 | 524.1 秒 |
 
-這些最高值與正式交付權重成績不同，最高 accuracy 和最高 F1 也可能來自不同輪次。耗時包括資料讀取、評估及輸出，不能用這次近似耗時宣稱三者純 GPU 運算成本相同。驗證 F1 近 0.99，但正式測試 F1 約 0.90–0.92，表示該驗證分區無法完全代表官方測試資料。
+最高測試 accuracy 同分時，熱圖顯示最早輪次，所以 ResNet101 顯示第 3 輪。最高 accuracy 與最高 F1 不一定同輪。此表是作業要求的最高觀察值，沒有用來選擇保存權重；多次觀察後的最大值可能較樂觀。耗時包含資料讀取、訓練、評估、保存及繪圖，不能視為純 GPU 計算或推論速度。
 
-`audit_corrected.json` 核對全部 36 筆指標、混淆矩陣及選模規則，並以 GPU 重評估三份保存權重，驗證與測試成績全部重現。完整討論在 Word；結果頁 `report_results.html`、實際截圖、曲線與兩種混淆矩陣均位於正式結果資料夾。
+### 比較圖
 
-### 可以如何提升準確率
+![三模型訓練與測試準確率](result/comparison_accuracy.png)
 
-先檢視假陽性影像及標籤，再只用分組驗證集比較學習率、解凍範圍、輸入解析度、保守增強、類別權重與分類閾值，同時查看 precision、recall 和 specificity。增加種子重複試驗可檢查差異是否穩定；若取得可信病患資料，應採病患分組與外部驗證。這些是後續實驗建議，尚未實測，不能宣稱有確定增幅。
+![三模型訓練與測試肺炎 F1](result/comparison_f1.png)
 
-## 6. 推論、Word 與報告規格
+![最高測試準確率輪次的混淆矩陣](result/comparison_highest_test_confusion.png)
 
-```powershell
-.\.venv\Scripts\python.exe inference.py --checkpoint results\corrected_group_split_20261002\resnet101_best_validation.pt --image 'data\chest_xray\test\NORMAL\IM-0001-0001.jpeg'
-```
+另可查看[驗證曲線](result/comparison_validation.png)、[驗證選模後的混淆矩陣](result/comparison_final_test_confusion.png)及[最高成績截圖](result/comparison_results_screenshot.jpg)。
 
-若使用重新訓練的權重，替換為 `results/reproduction_run/resnet101_best_validation.pt`。推論輸出預測類別及兩類 softmax 機率；推論可使用 CPU，訓練與實驗 GPU 稽核需要 CUDA。
+## 結果解讀與改善方向
 
-Word 可直接微調；依 Report Spec 含 Introduction、Experiment setups、Results 與結果導向的 Discussion，圖表及數字均來自正式結果。其他工具：
+**模型深度的收益有限且取決於選模方式。** 驗證選模後，ResNet101 比 ResNet50 多判對 10 張，accuracy 增加 1.60 個百分點；但逐輪最高測試 accuracy 由 ResNet50 取得。ResNet101 參數約為 ResNet50 的 1.81 倍，尚需推論時間與記憶體量測來比較成本，且單次種子不能證明穩定優勢。
 
-```powershell
-# 檢查既有報告的表格、圖片和主要討論數字
-.\.venv\Scripts\python.exe check_corrected_report.py
-# 更新既有版型中的實驗內容，會先在 report_backups 建立備份
-.\.venv\Scripts\python.exe update_corrected_report.py
-# 重新建立全文；會覆蓋自行修改內容，需先備份
-.\.venv\Scripts\python.exe build_docx_report.py
-```
+**主要問題是正常影像的假陽性。** ResNet101 的 FP／FN 為 66／1，肺炎 recall 達 99.74%，正常 specificity 為 71.79%。驗證集的正常影像為 0／209 誤判，測試集卻為 66／234；因此需要逐類別分析驗證與測試的落差，不能只看接近 0.99 的驗證 F1。正常影像比例在驗證集與測試集不同，但比例本身不足以解釋類別內假陽性率的差異。
 
-報告生成工具固定引用本次正式結果，不會自動把其他重跑資料夾取代為正式實驗。Word 的 4 個表格、6 張嵌入圖及數值核對通過；環境缺少 LibreOffice／可用 Word COM，**實際分頁未能自動驗證**。請本人微調、檢查分頁後匯出 `LAB1_315553010_楊敦傑.pdf`，並在自行推送 GitHub 後補入報告連結。完整對照見 `REPORT_SPEC_CHECKLIST.md`。
+**繼續訓練沒有持續提高測試準確率。** ResNet50 由第 2 輪到驗證選定的第 10 輪，FP 從 31 增至 75，FN 從 11 降至 2；少漏判 9 張肺炎，同時多誤判 44 張正常影像。訓練曲線接近飽和與測試表現波動，與過度擬合或分布差異相容，但本次尚無控制實驗可分離原因。
 
-## 7. 清理與 Git
+提升準確率的下一步應由錯誤分析出發：
 
-本次 Word 已完成。工具的自動核准審核拒絕刪除操作，因此舊檔案目前尚未由工具刪除。清理腳本已列出固定的舊目錄、舊模型與不再使用的程式，保護原始影像、venv、官方預訓練快取、正式結果與 Word；遇到重新解析點或超出專案的路徑會停止。
+1. 檢查假陽性影像的品質、邊框、來源與標籤，確認是否存在可驗證的分布差異。
+2. 僅在分組驗證集逐項比較學習率、解凍範圍、增強幅度與類別權重，同時記錄 recall 及 specificity。
+3. 如調整閾值或使用早停，仍以驗證集決定；不能直接把測試最高分輪次當成早停規則。
+4. 使用多個訓練種子與分組切分報告平均值及變異；有可靠病患資料後，再進行病患分組與外部資料驗證。
 
-請在專案根目錄執行，第一行只預覽，第二行才實際刪除：
+以上改善尚未實測，不能保證提升幅度。測試結果已被逐輪觀察並用於提出這些方向；未來依此調整方法後，需要未參與決策的新資料作最終評估。
 
-```powershell
-& .\tools\cleanup_project.ps1
-& .\tools\cleanup_project.ps1 -Execute
-```
+## 版本管理範圍
 
-清理會刪除 C 槽舊產物副本、舊實驗、舊報告備份／QA、過期程式、可再生快取及冗餘 ZIP；保留全部 5856 張原始影像與三模型正式權重。執行前核對 Word SHA256 與通過的內容稽核，完成後記錄 `results/corrected_group_split_20261002/cleanup_summary.json`，不會建立 `.git`。
+Git 保留訓練與稽核程式、正式結果圖表、CSV、JSON、訓練日誌及報告。`.gitignore` 排除 `.venv/`、`data/`、`runs/`、`*.pt`、Python 快取及本機封存目錄 `no_use_data/`。原實驗的 `run_metadata.json` 與日誌保留執行當時的環境資訊，程式重跑時使用目前專案位置，不依賴紀錄中的原機器路徑。
 
-依本人要求，確認實驗與報告後才建立 Git，推送由本人處理。`.gitignore` 排除 `.venv/`、`data/`、`.pt`、快取、舊產物與報告備份；保留正式 CSV、JSON、圖、訓練日誌及 Word。Git 儲存庫是程式與實驗紀錄，取得後重建環境、下載資料並重訓即可產生被排除的大型檔案。
+## 參考資料
 
-
+- [Deep Residual Learning for Image Recognition](https://arxiv.org/abs/1512.03385)
+- [Torchvision ResNet API](https://docs.pytorch.org/vision/stable/models/resnet.html)
+- [Kaggle Chest X Ray Images Pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)

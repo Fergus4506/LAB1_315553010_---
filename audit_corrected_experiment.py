@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parent
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('--results-dir',type=Path,default=ROOT/'results'/'corrected_group_split_20261002')
+    parser.add_argument('--results-dir',type=Path,default=ROOT/'result')
     args=parser.parse_args();out=args.results_dir
     meta=json.loads((out/'run_metadata.json').read_text(encoding='utf-8'))
     summary=json.loads((out/'summary.json').read_text(encoding='utf-8'))

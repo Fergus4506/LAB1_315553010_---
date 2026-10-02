@@ -3,7 +3,7 @@ import argparse,json,os,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 parser=argparse.ArgumentParser(description='Train and audit three ResNets with the verified group split')
-parser.add_argument('--output-dir',type=Path,default=ROOT/'results'/'reproduction_run')
+parser.add_argument('--output-dir',type=Path,default=ROOT/'runs'/'reproduction_run')
 args=parser.parse_args()
 OUT=args.output_dir.resolve()
 if not OUT.is_relative_to(ROOT.resolve()):parser.error('Output must stay inside this project')

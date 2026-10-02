@@ -46,7 +46,7 @@ def main():
     parser.add_argument('--output-dir',type=Path,default=ROOT/'data')
     args=parser.parse_args()
     output=args.output_dir.resolve()
-    if not output.is_relative_to(ROOT.resolve()):parser.error('Output must stay inside this D-drive project')
+    if not output.is_relative_to(ROOT.resolve()):parser.error('Output must stay inside this project')
     data=output/'chest_xray'
     written=skipped=0
     with zipfile.ZipFile(ensure_official_zip()) as archive:

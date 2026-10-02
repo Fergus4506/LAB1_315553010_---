@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 
-RESULTS = ROOT / "results"
+RESULTS = ROOT / "result"
 ORDER = ("resnet18", "resnet50", "resnet101")
 COLORS = {"resnet18": "#2166ac", "resnet50": "#b2182b", "resnet101": "#1b7837"}
 
@@ -126,7 +126,7 @@ def plot_log_excerpt(summary, output):
 def main():
     global RESULTS
     parser = argparse.ArgumentParser()
-    parser.add_argument('--results-dir', type=Path, default=ROOT / "results" / "corrected_group_split_20261002")
+    parser.add_argument('--results-dir', type=Path, default=ROOT / "result")
     args=parser.parse_args()
     RESULTS=args.results_dir
     rows = load_rows(RESULTS / "epoch_metrics.csv")

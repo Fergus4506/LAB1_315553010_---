@@ -18,7 +18,7 @@ MODELS = {
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("--results-dir",type=Path,default=ROOT/"results"/"corrected_group_split_20261002")
+    parser.add_argument("--results-dir",type=Path,default=ROOT/"result")
     args=parser.parse_args()
     results = {}
     for name, (checkpoint_name, reference_name, weight_id) in MODELS.items():

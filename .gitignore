@@ -2,10 +2,13 @@
 data/
 __pycache__/
 *.pyc
-results/**/*.pt
+*.pt
 *.log
 !results/**/training.log
+!result/training.log
+runs/
 report_qa/
 report_backups/
 archive_from_c/
 tools/
+no_use_data/
