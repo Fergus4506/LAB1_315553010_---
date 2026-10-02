@@ -1,0 +1,18 @@
+{
+  "source": "paultimothymooney/chest-xray-pneumonia",
+  "version": 2,
+  "zip_bytes": 2463365435,
+  "official_unique_images": 5856,
+  "local_images": 5856,
+  "all_match_official_size_crc32": true,
+  "extra_local_paths": [],
+  "official_metadata": {
+    "id": 17810,
+    "ref": "paultimothymooney/chest-xray-pneumonia",
+    "title": "Chest X-Ray Images (Pneumonia)",
+    "currentVersionNumber": 2,
+    "lastUpdated": "2018-03-24T19:41:59.603Z",
+    "totalBytes": 1236482806
+  },
+  "excluded_from_image_inventory": "macOS __MACOSX and ._ resource metadata; identical nested ZIP image copies collapsed by canonical relative path"
+}

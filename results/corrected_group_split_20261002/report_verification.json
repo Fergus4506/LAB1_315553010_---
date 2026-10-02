@@ -1,0 +1,20 @@
+{
+  "docx_zip_crc_ok": true,
+  "tables": 4,
+  "images": 6,
+  "all_selected_result_table_values_match": true,
+  "all_embedded_figures_match_corrected_sources": true,
+  "image_content_types": [
+    "image/jpeg",
+    "image/png",
+    "image/png",
+    "image/png",
+    "image/png",
+    "image/png"
+  ],
+  "discussion_matches_corrected_data": true,
+  "git_not_initialized": true,
+  "automatic_pagination_checked": false,
+  "report_sha256": "29cdde85f09fcb64abdb0dc894450416627e38be521f9b61f0d1141287c57749",
+  "review_date": "2026-10-02"
+}

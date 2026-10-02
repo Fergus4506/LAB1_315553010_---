@@ -1,0 +1,162 @@
+{
+  "student_id": "315553010",
+  "student_name": "楊敦傑",
+  "dataset": "paultimothymooney/chest-xray-pneumonia",
+  "gpu": "NVIDIA GeForce RTX 4070",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "cuda": "12.8",
+  "args": {
+    "data_dir": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\data\\chest_xray",
+    "output_dir": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\results\\corrected_group_split_20261002",
+    "epochs": 12,
+    "batch_size": 32,
+    "num_workers": 2,
+    "image_size": 224,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "validation_fraction": 0.15,
+    "seed": 315553010,
+    "no_pretrained": false,
+    "models": [
+      "resnet18",
+      "resnet50",
+      "resnet101"
+    ],
+    "split_manifest": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\data\\source_verification\\corrected_split_manifest.json",
+    "legacy_image_split": false
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\.venv\\Scripts\\python.exe",
+  "venv_prefix": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\.venv",
+  "split_method": "connected components of filename namespace (person+etiology / normal series), byte SHA256 and decoded RGB SHA256; official val forced into validation; official test unchanged",
+  "split_manifest_sha256": "d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3",
+  "seed_reset_per_model": true,
+  "cudnn_benchmark": false,
+  "cudnn_deterministic": true,
+  "train_counts": {
+    "0": 1140,
+    "1": 3294
+  },
+  "validation_counts": {
+    "0": 209,
+    "1": 589
+  },
+  "test_counts": {
+    "0": 234,
+    "1": 390
+  }
+}
+resnet18 epoch 01/12: train acc=0.9583 f1=0.9714; val acc=0.9787 f1=0.9854; test acc=0.8798 f1=0.9119
+resnet18 epoch 02/12: train acc=0.9786 f1=0.9855; val acc=0.9461 f1=0.9621; test acc=0.9279 f1=0.9441
+resnet18 epoch 03/12: train acc=0.9860 f1=0.9905; val acc=0.9574 f1=0.9703; test acc=0.8942 f1=0.9207
+resnet18 epoch 04/12: train acc=0.9905 f1=0.9936; val acc=0.9687 f1=0.9783; test acc=0.8942 f1=0.9209
+resnet18 epoch 05/12: train acc=0.9917 f1=0.9944; val acc=0.9662 f1=0.9765; test acc=0.9103 f1=0.9320
+resnet18 epoch 06/12: train acc=0.9935 f1=0.9956; val acc=0.9799 f1=0.9862; test acc=0.8990 f1=0.9249
+resnet18 epoch 07/12: train acc=0.9975 f1=0.9983; val acc=0.9825 f1=0.9880; test acc=0.8750 f1=0.9085
+resnet18 epoch 08/12: train acc=0.9980 f1=0.9986; val acc=0.9812 f1=0.9871; test acc=0.8846 f1=0.9151
+resnet18 epoch 09/12: train acc=0.9973 f1=0.9982; val acc=0.9837 f1=0.9889; test acc=0.8558 f1=0.8963
+resnet18 epoch 10/12: train acc=0.9980 f1=0.9986; val acc=0.9825 f1=0.9880; test acc=0.8798 f1=0.9121
+resnet18 epoch 11/12: train acc=0.9989 f1=0.9992; val acc=0.9837 f1=0.9889; test acc=0.8606 f1=0.8994
+resnet18 epoch 12/12: train acc=0.9982 f1=0.9988; val acc=0.9837 f1=0.9889; test acc=0.8574 f1=0.8973
+resnet50 epoch 01/12: train acc=0.9355 f1=0.9556; val acc=0.9574 f1=0.9704; test acc=0.9006 f1=0.9246
+resnet50 epoch 02/12: train acc=0.9752 f1=0.9832; val acc=0.9474 f1=0.9631; test acc=0.9327 f1=0.9475
+resnet50 epoch 03/12: train acc=0.9840 f1=0.9892; val acc=0.9649 f1=0.9757; test acc=0.9119 f1=0.9332
+resnet50 epoch 04/12: train acc=0.9878 f1=0.9918; val acc=0.9737 f1=0.9820; test acc=0.8926 f1=0.9205
+resnet50 epoch 05/12: train acc=0.9926 f1=0.9950; val acc=0.9737 f1=0.9818; test acc=0.9103 f1=0.9322
+resnet50 epoch 06/12: train acc=0.9932 f1=0.9954; val acc=0.9799 f1=0.9863; test acc=0.8990 f1=0.9247
+resnet50 epoch 07/12: train acc=0.9957 f1=0.9971; val acc=0.9825 f1=0.9880; test acc=0.8942 f1=0.9214
+resnet50 epoch 08/12: train acc=0.9957 f1=0.9971; val acc=0.9774 f1=0.9845; test acc=0.8878 f1=0.9167
+resnet50 epoch 09/12: train acc=0.9975 f1=0.9983; val acc=0.9799 f1=0.9863; test acc=0.8846 f1=0.9149
+resnet50 epoch 10/12: train acc=0.9982 f1=0.9988; val acc=0.9825 f1=0.9880; test acc=0.8766 f1=0.9097
+resnet50 epoch 11/12: train acc=0.9980 f1=0.9986; val acc=0.9799 f1=0.9863; test acc=0.8830 f1=0.9140
+resnet50 epoch 12/12: train acc=0.9989 f1=0.9992; val acc=0.9812 f1=0.9871; test acc=0.8782 f1=0.9108
+resnet101 epoch 01/12: train acc=0.9389 f1=0.9577; val acc=0.9724 f1=0.9810; test acc=0.8782 f1=0.9106
+resnet101 epoch 02/12: train acc=0.9795 f1=0.9861; val acc=0.9649 f1=0.9757; test acc=0.8974 f1=0.9233
+resnet101 epoch 03/12: train acc=0.9905 f1=0.9936; val acc=0.9649 f1=0.9757; test acc=0.9135 f1=0.9346
+resnet101 epoch 04/12: train acc=0.9883 f1=0.9921; val acc=0.9812 f1=0.9873; test acc=0.8349 f1=0.8831
+resnet101 epoch 05/12: train acc=0.9892 f1=0.9927; val acc=0.9812 f1=0.9871; test acc=0.8766 f1=0.9095
+resnet101 epoch 06/12: train acc=0.9957 f1=0.9971; val acc=0.9799 f1=0.9862; test acc=0.8718 f1=0.9068
+resnet101 epoch 07/12: train acc=0.9984 f1=0.9989; val acc=0.9850 f1=0.9897; test acc=0.8926 f1=0.9207
+resnet101 epoch 08/12: train acc=0.9989 f1=0.9992; val acc=0.9787 f1=0.9854; test acc=0.8958 f1=0.9227
+resnet101 epoch 09/12: train acc=0.9986 f1=0.9991; val acc=0.9762 f1=0.9836; test acc=0.9135 f1=0.9349
+resnet101 epoch 10/12: train acc=0.9984 f1=0.9989; val acc=0.9850 f1=0.9897; test acc=0.8990 f1=0.9249
+resnet101 epoch 11/12: train acc=0.9993 f1=0.9995; val acc=0.9812 f1=0.9871; test acc=0.9022 f1=0.9271
+resnet101 epoch 12/12: train acc=0.9993 f1=0.9995; val acc=0.9850 f1=0.9897; test acc=0.8942 f1=0.9218
+SUMMARY {
+  "resnet18": {
+    "weights": "ResNet18_Weights.IMAGENET1K_V1",
+    "validation_selected_epoch": 9,
+    "best_validation_f1": 0.9888793840889649,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.755006544259138,
+      "accuracy": 0.8557692307692307,
+      "precision": 0.8138075313807531,
+      "recall": 0.9974358974358974,
+      "f1": 0.8963133640552995,
+      "tn": 145,
+      "fp": 89,
+      "fn": 1,
+      "tp": 389
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 2,
+      "accuracy": 0.9278846153846154
+    },
+    "highest_observed_test_f1": {
+      "epoch": 2,
+      "f1": 0.9440993788819876
+    },
+    "elapsed_seconds": 522.8
+  },
+  "resnet50": {
+    "weights": "ResNet50_Weights.IMAGENET1K_V2",
+    "validation_selected_epoch": 10,
+    "best_validation_f1": 0.988013698630137,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.6155890631452143,
+      "accuracy": 0.8766025641025641,
+      "precision": 0.838012958963283,
+      "recall": 0.9948717948717949,
+      "f1": 0.9097303634232122,
+      "tn": 159,
+      "fp": 75,
+      "fn": 2,
+      "tp": 388
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 2,
+      "accuracy": 0.9326923076923077
+    },
+    "highest_observed_test_f1": {
+      "epoch": 2,
+      "f1": 0.9475
+    },
+    "elapsed_seconds": 522.6
+  },
+  "resnet101": {
+    "weights": "ResNet101_Weights.IMAGENET1K_V2",
+    "validation_selected_epoch": 7,
+    "best_validation_f1": 0.9897084048027445,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.5426104318545325,
+      "accuracy": 0.8926282051282052,
+      "precision": 0.8549450549450549,
+      "recall": 0.9974358974358974,
+      "f1": 0.9207100591715977,
+      "tn": 168,
+      "fp": 66,
+      "fn": 1,
+      "tp": 389
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 3,
+      "accuracy": 0.9134615384615384
+    },
+    "highest_observed_test_f1": {
+      "epoch": 9,
+      "f1": 0.9349397590361446
+    },
+    "elapsed_seconds": 524.1
+  }
+}

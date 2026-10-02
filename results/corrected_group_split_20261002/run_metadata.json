@@ -1,0 +1,49 @@
+{
+  "student_id": "315553010",
+  "student_name": "楊敦傑",
+  "dataset": "paultimothymooney/chest-xray-pneumonia",
+  "gpu": "NVIDIA GeForce RTX 4070",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "cuda": "12.8",
+  "args": {
+    "data_dir": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\data\\chest_xray",
+    "output_dir": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\results\\corrected_group_split_20261002",
+    "epochs": 12,
+    "batch_size": 32,
+    "num_workers": 2,
+    "image_size": 224,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "validation_fraction": 0.15,
+    "seed": 315553010,
+    "no_pretrained": false,
+    "models": [
+      "resnet18",
+      "resnet50",
+      "resnet101"
+    ],
+    "split_manifest": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\data\\source_verification\\corrected_split_manifest.json",
+    "legacy_image_split": false
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\.venv\\Scripts\\python.exe",
+  "venv_prefix": "D:\\人工智慧醫學影像應用\\lab1\\LAB1_315553010_楊敦傑\\.venv",
+  "split_method": "connected components of filename namespace (person+etiology / normal series), byte SHA256 and decoded RGB SHA256; official val forced into validation; official test unchanged",
+  "split_manifest_sha256": "d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3",
+  "seed_reset_per_model": true,
+  "cudnn_benchmark": false,
+  "cudnn_deterministic": true,
+  "train_counts": {
+    "0": 1140,
+    "1": 3294
+  },
+  "validation_counts": {
+    "0": 209,
+    "1": 589
+  },
+  "test_counts": {
+    "0": 234,
+    "1": 390
+  }
+}

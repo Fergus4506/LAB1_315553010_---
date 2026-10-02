@@ -1,0 +1,125 @@
+{
+  "history_rows": 36,
+  "all_confusion_metrics_and_selections_match": true,
+  "split_manifest_sha256": "d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3",
+  "counts": {
+    "train": {
+      "0": 1140,
+      "1": 3294
+    },
+    "validation": {
+      "0": 209,
+      "1": 589
+    },
+    "test": {
+      "0": 234,
+      "1": 390
+    }
+  },
+  "cross_split_group_counts": {
+    "filename_group": 0,
+    "sha256": 0,
+    "decoded_sha256": 0,
+    "component_id": 0
+  },
+  "official_test_unchanged": true,
+  "gpu": "NVIDIA GeForce RTX 4070",
+  "checkpoint_reevaluation": {
+    "resnet18": {
+      "checkpoint_epoch": 9,
+      "evaluation": {
+        "validation": {
+          "loss": 0.04725760507909698,
+          "accuracy": 0.9837092731829574,
+          "precision": 0.996551724137931,
+          "recall": 0.9813242784380306,
+          "f1": 0.9888793840889649,
+          "tn": 207,
+          "fp": 2,
+          "fn": 11,
+          "tp": 578
+        },
+        "test": {
+          "loss": 0.755006544259138,
+          "accuracy": 0.8557692307692307,
+          "precision": 0.8138075313807531,
+          "recall": 0.9974358974358974,
+          "f1": 0.8963133640552995,
+          "tn": 145,
+          "fp": 89,
+          "fn": 1,
+          "tp": 389
+        }
+      },
+      "matches_history": true,
+      "parameters": {
+        "total": 11177538,
+        "trainable": 10494466
+      }
+    },
+    "resnet50": {
+      "checkpoint_epoch": 10,
+      "evaluation": {
+        "validation": {
+          "loss": 0.05688769110527478,
+          "accuracy": 0.9824561403508771,
+          "precision": 0.9965457685664939,
+          "recall": 0.9796264855687606,
+          "f1": 0.988013698630137,
+          "tn": 207,
+          "fp": 2,
+          "fn": 12,
+          "tp": 577
+        },
+        "test": {
+          "loss": 0.6155890631452143,
+          "accuracy": 0.8766025641025641,
+          "precision": 0.838012958963283,
+          "recall": 0.9948717948717949,
+          "f1": 0.9097303634232122,
+          "tn": 159,
+          "fp": 75,
+          "fn": 2,
+          "tp": 388
+        }
+      },
+      "matches_history": true,
+      "parameters": {
+        "total": 23512130,
+        "trainable": 22067202
+      }
+    },
+    "resnet101": {
+      "checkpoint_epoch": 7,
+      "evaluation": {
+        "validation": {
+          "loss": 0.06818505067887125,
+          "accuracy": 0.9849624060150376,
+          "precision": 1.0,
+          "recall": 0.9796264855687606,
+          "f1": 0.9897084048027445,
+          "tn": 209,
+          "fp": 0,
+          "fn": 12,
+          "tp": 577
+        },
+        "test": {
+          "loss": 0.5426104318545325,
+          "accuracy": 0.8926282051282052,
+          "precision": 0.8549450549450549,
+          "recall": 0.9974358974358974,
+          "f1": 0.9207100591715977,
+          "tn": 168,
+          "fp": 66,
+          "fn": 1,
+          "tp": 389
+        }
+      },
+      "matches_history": true,
+      "parameters": {
+        "total": 42504258,
+        "trainable": 41059330
+      }
+    }
+  }
+}

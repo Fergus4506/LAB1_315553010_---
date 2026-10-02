@@ -1,0 +1,5 @@
+{
+  "all_three_models_complete": true,
+  "gpu_checkpoint_audit_passed": true,
+  "pretrained_verification_passed": true
+}

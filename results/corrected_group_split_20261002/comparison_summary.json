@@ -1,0 +1,77 @@
+{
+  "resnet18": {
+    "weights": "ResNet18_Weights.IMAGENET1K_V1",
+    "validation_selected_epoch": 9,
+    "best_validation_f1": 0.9888793840889649,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.755006544259138,
+      "accuracy": 0.8557692307692307,
+      "precision": 0.8138075313807531,
+      "recall": 0.9974358974358974,
+      "f1": 0.8963133640552995,
+      "tn": 145,
+      "fp": 89,
+      "fn": 1,
+      "tp": 389
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 2,
+      "accuracy": 0.9278846153846154
+    },
+    "highest_observed_test_f1": {
+      "epoch": 2,
+      "f1": 0.9440993788819876
+    },
+    "elapsed_seconds": 522.8
+  },
+  "resnet50": {
+    "weights": "ResNet50_Weights.IMAGENET1K_V2",
+    "validation_selected_epoch": 10,
+    "best_validation_f1": 0.988013698630137,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.6155890631452143,
+      "accuracy": 0.8766025641025641,
+      "precision": 0.838012958963283,
+      "recall": 0.9948717948717949,
+      "f1": 0.9097303634232122,
+      "tn": 159,
+      "fp": 75,
+      "fn": 2,
+      "tp": 388
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 2,
+      "accuracy": 0.9326923076923077
+    },
+    "highest_observed_test_f1": {
+      "epoch": 2,
+      "f1": 0.9475
+    },
+    "elapsed_seconds": 522.6
+  },
+  "resnet101": {
+    "weights": "ResNet101_Weights.IMAGENET1K_V2",
+    "validation_selected_epoch": 7,
+    "best_validation_f1": 0.9897084048027445,
+    "final_test_at_validation_selected_epoch": {
+      "loss": 0.5426104318545325,
+      "accuracy": 0.8926282051282052,
+      "precision": 0.8549450549450549,
+      "recall": 0.9974358974358974,
+      "f1": 0.9207100591715977,
+      "tn": 168,
+      "fp": 66,
+      "fn": 1,
+      "tp": 389
+    },
+    "highest_observed_test_accuracy": {
+      "epoch": 3,
+      "accuracy": 0.9134615384615384
+    },
+    "highest_observed_test_f1": {
+      "epoch": 9,
+      "f1": 0.9349397590361446
+    },
+    "elapsed_seconds": 524.1
+  }
+}

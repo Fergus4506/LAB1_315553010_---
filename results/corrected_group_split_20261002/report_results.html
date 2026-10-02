@@ -1,0 +1,11 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><title>Lab1 修正實驗結果</title><style>
+body{margin:0;background:white;color:#18212b;font-family:"Microsoft JhengHei",Arial,sans-serif;font-size:20px}main{max-width:950px;margin:25px 0;padding:0 24px}h1{font-size:28px;color:black;margin:0 0 12px}h2{font-size:22px;color:black;margin:24px 0 10px}p{line-height:1.6;margin:8px 0}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{border:1px solid #ccd3d9;padding:9px 12px;text-align:center}th{background:#e8eef3}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2f4f6;border:1px solid #ccd3d9;padding:14px;font:18px/1.55 Consolas,monospace}small{font-size:17px;color:#444}
+</style></head><body><main><h1>Lab1 分組切分修正實驗結果</h1><p>315553010 楊敦傑　ResNet18／50／101　各 12 輪　RTX 4070　Python venv</p>
+<p>資料來源核對：官方第 2 版 5856 張全部相符。訓練／驗證／測試：4434／798／624；檔名組、原始檔及解碼像素雜湊跨區重疊均為 0。</p>
+<h2>逐輪最高觀察測試成績</h2><table><thead><tr><th>模型</th><th>最高 Test Accuracy</th><th>輪次</th><th>最高 Test F1</th><th>輪次</th></tr></thead><tbody><tr><td>resnet18</td><td>92.79%</td><td>2</td><td>0.9441</td><td>2</td></tr><tr><td>resnet50</td><td>93.27%</td><td>2</td><td>0.9475</td><td>2</td></tr><tr><td>resnet101</td><td>91.35%</td><td>3</td><td>0.9349</td><td>9</td></tr></tbody></table>
+<h2>最高成績所在輪次的原始訓練日誌</h2><pre>resnet18 epoch 02/12: train acc=0.9786 f1=0.9855; val acc=0.9461 f1=0.9621; test acc=0.9279 f1=0.9441
+resnet50 epoch 02/12: train acc=0.9752 f1=0.9832; val acc=0.9474 f1=0.9631; test acc=0.9327 f1=0.9475
+resnet101 epoch 03/12: train acc=0.9905 f1=0.9936; val acc=0.9649 f1=0.9757; test acc=0.9135 f1=0.9346
+resnet101 epoch 09/12: train acc=0.9986 f1=0.9991; val acc=0.9762 f1=0.9836; test acc=0.9135 f1=0.9349</pre>
+<h2>僅依驗證 F1 選定權重的結果</h2><table><thead><tr><th>模型</th><th>選定輪次</th><th>Val F1</th><th>Test Accuracy</th><th>Test F1</th></tr></thead><tbody><tr><td>resnet18</td><td>9</td><td>0.9889</td><td>85.58%</td><td>0.8963</td></tr><tr><td>resnet50</td><td>10</td><td>0.9880</td><td>87.66%</td><td>0.9097</td></tr><tr><td>resnet101</td><td>7</td><td>0.9897</td><td>89.26%</td><td>0.9207</td></tr></tbody></table>
+<p><small>最高觀察值用於作業要求的呈現，未用來選權重或此次調參。F1 為 PNEUMONIA 正類的二元 F1。數值直接讀取保存的 summary.json 與 training.log。</small></p></main></body></html>

@@ -1,0 +1,10 @@
+.venv/
+data/
+__pycache__/
+*.pyc
+results/**/*.pt
+*.log
+!results/**/training.log
+report_qa/
+report_backups/
+archive_from_c/
