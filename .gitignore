@@ -8,3 +8,4 @@ results/**/*.pt
 report_qa/
 report_backups/
 archive_from_c/
+tools/
