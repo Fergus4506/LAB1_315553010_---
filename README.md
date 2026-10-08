@@ -2,6 +2,8 @@
 
 **學號：315553010　姓名：楊敦傑**
 
+GitHub：[Fergus4506/LAB1_315553010_---](https://github.com/Fergus4506/LAB1_315553010_---)
+
 使用自訂 PyTorch Dataset／DataLoader，比較 ImageNet 預訓練 ResNet18、ResNet50 與 ResNet101，將胸部 X 光影像分類為 NORMAL（0）或 PNEUMONIA（1）。三個模型均以 Python 內建 `venv` 環境完成 12 輪 CUDA GPU 訓練。
 
 **本次正式實驗結果位於 [`result/`](result/)。** 各模型依最高驗證集肺炎 F1 保存權重；按相同準則跨模型選出的 ResNet101，測試 accuracy 為 **89.26%**、F1 為 **0.9207**。逐輪觀察到的最高測試 accuracy 則為 ResNet50 的 **93.27%**，兩者代表不同的評估方式。
@@ -91,7 +93,12 @@ ResNet 的殘差捷徑讓特徵可經捷徑傳遞，便於比較不同深度的�
 
 需要 Python 3.12、NVIDIA GPU，以及能支援 CUDA 12.8 PyTorch wheel 的 NVIDIA 驅動。正式實驗使用 RTX 4070、Python 3.12.14、PyTorch 2.11.0+cu128、torchvision 0.26.0+cu128；其餘版本固定於 `requirements.txt`。不同硬體、驅動或套件版本可能產生數值差異。
 
-取得本專案後，**在儲存庫根目錄開啟終端機**。以下命令均使用相對路徑，不需要特定磁碟或使用者目錄。
+先取得本專案，再於儲存庫根目錄執行建置步驟。以下命令均使用相對路徑，不需要特定磁碟或使用者目錄。
+
+```bash
+git clone https://github.com/Fergus4506/LAB1_315553010_---.git
+cd LAB1_315553010_---
+```
 
 ### Windows PowerShell
 
@@ -144,13 +151,13 @@ export PYTHONIOENCODING=utf-8
 
 第一次下載約 2.46 GB，需網路連線。程式使用固定版本的公開下載端點，重用已存在的 ZIP；影像放在 `data/chest_xray/`，核對紀錄與切分清單放在 `data/source_verification/`。若下載端點回傳權限、驗證頁或限流錯誤，應先處理下載問題，不要跳過來源核對。
 
-預設切分種子與比例對應本次正式實驗。可核對新產生清單與正式清單的 SHA256：
+預設切分種子與比例對應本次正式實驗。下列命令核對兩份 JSON 的完整內容，包括每張影像的分區、標籤與雜湊；不把換行字元差異誤判為切分不同：
 
 ```powershell
-& $python -c "from pathlib import Path; import hashlib; a=hashlib.sha256(Path('data/source_verification/corrected_split_manifest.json').read_bytes()).hexdigest(); b=hashlib.sha256(Path('result/split_manifest.json').read_bytes()).hexdigest(); print('generated:', a); print('reference:', b); assert a == b, 'Split manifests differ'"
+& $python -c "from pathlib import Path; import json; a=json.loads(Path('data/source_verification/corrected_split_manifest.json').read_text(encoding='utf-8')); b=json.loads(Path('result/split_manifest.json').read_text(encoding='utf-8')); assert a == b, 'Split manifest contents differ'; print('All split records match the reference')"
 ```
 
-正式清單 SHA256：`d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3`。
+正式清單原始檔案 SHA256：`d2994dc03d477d7dd9b4483518110be187266553ac94eac7044cc6c6ed3183e3`。`.gitattributes` 保留 `result/split_manifest.json` 的原始位元組，避免 Git 自動轉換換行，使正式清單與保存權重、執行紀錄的雜湊一致。新環境重新生成的 JSON 可能使用不同換行，應以上述完整內容比較核對切分；新訓練會記錄該次清單自己的檔案雜湊。
 
 ### 2 訓練三個模型並核對權重
 
@@ -237,6 +244,10 @@ export PYTHONIOENCODING=utf-8
 ## 版本管理範圍
 
 Git 保留訓練與稽核程式、正式結果圖表、CSV、JSON、訓練日誌及報告。`.gitignore` 排除 `.venv/`、`data/`、`runs/`、`*.pt`、Python 快取及本機封存目錄 `no_use_data/`。原實驗的 `run_metadata.json` 與日誌保留執行當時的環境資訊，程式重跑時使用目前專案位置，不依賴紀錄中的原機器路徑。
+
+## 報告提交
+
+可編輯報告為 `LAB1_315553010_楊敦傑.docx`。提交 E3 前應匯出成 `LAB1_315553010_楊敦傑.pdf`；報告包含 Introduction、Experiment setups、Experiment result、Discussion 與上述 GitHub 連結。作業指定截止時間為 2026 年 10 月 16 日 23:59。
 
 ## 參考資料
 

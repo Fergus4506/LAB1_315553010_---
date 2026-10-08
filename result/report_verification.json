@@ -1,20 +1,25 @@
 {
+  "review_date": "2026-10-03",
+  "reviewed_spec_pages": 16,
   "docx_zip_crc_ok": true,
   "tables": 4,
   "images": 6,
+  "inline_images": 5,
+  "floating_images": 1,
   "all_selected_result_table_values_match": true,
+  "all_highest_result_table_values_match": true,
   "all_embedded_figures_match_corrected_sources": true,
-  "image_content_types": [
-    "image/jpeg",
-    "image/png",
-    "image/png",
-    "image/png",
-    "image/png",
-    "image/png"
-  ],
-  "discussion_matches_corrected_data": true,
-  "git_not_initialized": false,
+  "history_rows": 36,
+  "all_confusion_metrics_and_selections_match": true,
+  "all_5856_images_match_manifest_sha256": true,
+  "official_test_unchanged": true,
+  "cross_split_overlaps_zero": true,
+  "github_url": "https://github.com/Fergus4506/LAB1_315553010_---",
+  "github_link_complete": true,
+  "remote_commit_reviewed": "29579e82ca1eaf17763febb94a066b6a2000f015",
+  "report_sha256": "904d199e1efebaee45b4fbf5bda80f1677cb835492a94eb9a45407c6e851c076",
   "automatic_pagination_checked": false,
-  "report_sha256": "fe702c6c123f91b35e6fbc5689ecb357452fecc66d4b17996dd6e68fc7598926",
-  "review_date": "2026-10-02"
+  "pagination_limitation": "Packaged renderer cannot run because LibreOffice soffice.exe is unavailable.",
+  "pdf_export_by_user_pending": true,
+  "local_corrections_push_pending": true
 }

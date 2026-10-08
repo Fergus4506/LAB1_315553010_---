@@ -1,0 +1,2 @@
+# Keep the recorded manifest bytes identical to the checksum in the run metadata.
+result/split_manifest.json -text
