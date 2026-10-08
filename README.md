@@ -245,9 +245,6 @@ export PYTHONIOENCODING=utf-8
 
 Git 保留訓練與稽核程式、正式結果圖表、CSV、JSON、訓練日誌及報告。`.gitignore` 排除 `.venv/`、`data/`、`runs/`、`*.pt`、Python 快取及本機封存目錄 `no_use_data/`。原實驗的 `run_metadata.json` 與日誌保留執行當時的環境資訊，程式重跑時使用目前專案位置，不依賴紀錄中的原機器路徑。
 
-## 報告提交
-
-可編輯報告為 `LAB1_315553010_楊敦傑.docx`。提交 E3 前應匯出成 `LAB1_315553010_楊敦傑.pdf`；報告包含 Introduction、Experiment setups、Experiment result、Discussion 與上述 GitHub 連結。作業指定截止時間為 2026 年 10 月 16 日 23:59。
 
 ## 參考資料
 
